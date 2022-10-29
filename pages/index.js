@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
+import Link from "next/link";
 import styles from "../styles/Home.module.css";
 
 const Home = (props) => {
@@ -8,7 +9,9 @@ const Home = (props) => {
     <div className={styles.container}>
       <ul>
         {products.map((product) => (
-          <li key={product.id}>{product.name}</li>
+          <li key={product.id}>
+            <Link href={`/${product.id}`}>{product.name}</Link>
+          </li>
         ))}
       </ul>
     </div>
