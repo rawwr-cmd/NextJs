@@ -15,17 +15,33 @@ const Home = (props) => {
   );
 };
 
-export const getStaticProps = async () => {
+export const getStaticProps = async (context) => {
+  console.log("re-generating...");
   const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
   const jsonData = await fs.readFile(filePath);
   // converts the json object into a js object
   const data = JSON.parse(jsonData);
   // console.log(data);
 
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/no-data",
+      },
+    };
+  }
+
+  if (data.products.length === 0) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       products: data.products,
     },
+    revalidate: 10,
   };
 };
 
