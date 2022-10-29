@@ -3,8 +3,8 @@ import useSWR from "swr";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const SwrPage = () => {
-  const [sales, setSales] = useState();
+const SwrPage = ({ serversidesales }) => {
+  const [sales, setSales] = useState(serversidesales);
   //   const [isLoading, setIsLoading] = useState(false);
 
   const { data, error } = useSWR(
@@ -58,7 +58,7 @@ const SwrPage = () => {
     return <p>Failed to load.</p>;
   }
 
-  if (!data || !sales) {
+  if (!data && !sales) {
     return <p>Loading...</p>;
   }
 
@@ -71,6 +71,44 @@ const SwrPage = () => {
       ))}
     </ul>
   );
+};
+
+// fetch(
+//       "https://client-side-data-fetchin-ebef2-default-rtdb.firebaseio.com/sales.json"
+//     )
+//       .then((response) => response.json())
+//       .then((data) => {
+//         const transformedSales = [];
+//         for (const key in data) {
+//           transformedSales.push({
+//             id: key,
+//             // username: data[key].username,
+//             // volume: data[key].volume,
+//             ...data[key],
+//           });
+//         }
+//         console.log(transformedSales);
+
+export const getStaticProps = async () => {
+  const response = await fetch(
+    "https://client-side-data-fetchin-ebef2-default-rtdb.firebaseio.com/sales.json"
+  );
+  const data = await response.json();
+  const transformedSales = [];
+  for (const key in data) {
+    transformedSales.push({
+      id: key,
+      // username: data[key].username,
+      // volume: data[key].volume,
+      ...data[key],
+    });
+  }
+  console.log(transformedSales);
+  return {
+    props: {
+      serversidesales: transformedSales,
+    },
+  };
 };
 
 export default SwrPage;
