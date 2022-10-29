@@ -17,17 +17,29 @@ const ProductDetailPage = (props) => {
   );
 };
 
-export const getStaticProps = async (context) => {
-  const { params } = context;
-  const { pid } = params; //www.localhost:300.com/productId
-
+const getData = async () => {
   const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
   const jsonData = await fs.readFile(filePath);
   // converts the json object into a js object
   const data = JSON.parse(jsonData);
   // console.log(data);
 
+  return data;
+};
+
+const getStaticProps = async (context) => {
+  const { params } = context;
+  const { pid } = params; //www.localhost:300.com/productId
+
+  const data = await getData();
+
   const product = data.products.find((product) => product.id === pid);
+
+  if (!product) {
+    return {
+      notFound: true, //404
+    };
+  }
 
   return {
     props: {
@@ -39,12 +51,24 @@ export const getStaticProps = async (context) => {
 //getStaticpath is required to tell nextjs which concrete instances of this
 //dynamic page should be pre-generated
 
-export const getStaticPaths = async () => {
+const getStaticPaths = async () => {
+  const data = await getData();
+  //   console.log(data);
+  //   The map() method creates a new array populated with the results of
+  //   calling a provided function on every element in the calling array.
+  const ids = data.products.map((product) => product.id); //['1', '2', '3']
+  //   console.log(ids);
+  const pathWithParams = ids.map((id) => ({ params: { pid: id } }));
+  //   console.log(pathWithParams);
+
   return {
-    paths: [{ params: { pid: "1" } }],
+    paths: pathWithParams,
     // fallback: true,
-    fallback: "blocking",
+    // fallback: "blocking",
+    fallback: true,
   };
 };
+
+export { getStaticProps, getStaticPaths };
 
 export default ProductDetailPage;
