@@ -1,4 +1,4 @@
-import { buildFeedPath, extractFeedback } from "../api/feedback";
+import { buildFeedPath, extractFeedback } from "./index";
 
 const handler = (req, res) => {
   // if (req.method === "Delete") {}

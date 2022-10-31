@@ -5,7 +5,7 @@ const GetFeedback = ({ feedbackItems }) => {
   const [feedbackData, setFeedbackData] = useState();
 
   const loadFeedBackHandler = (id) => {
-    fetch(`/api/${id}`)
+    fetch(`/api/feedback/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log(data);
